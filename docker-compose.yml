@@ -1,0 +1,37 @@
+services:
+  db:
+    image: mysql:5.7
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: flaskdb
+    # Expose a non-conflicting host port so Windows' local MySQL doesn't collide.
+    # If you don't need to access MySQL from the host, you can remove this ports section.
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build: .
+    container_name: flask_web
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASSWORD=rootpass
+      - DB_NAME=flaskdb
+
+# Notes:
+# - We intentionally map MySQL to host port 3307 to avoid conflicts with any local MySQL
+#   instance that might already be listening on 3306 (common on Windows).
+# - The `healthcheck` allows Docker to test when MySQL is ready. `depends_on` ensures
+#   startup order but does not wait for readiness; the healthcheck helps but your app
+#   should still use retry/backoff when connecting during startup.
