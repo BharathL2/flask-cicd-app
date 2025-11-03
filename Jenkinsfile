@@ -30,7 +30,7 @@ pipeline {
 
         stage('Push to Docker Hub') {
             steps {
-                withDockerRegistry([ credentialsId: 'dockerhub-login' ]) {
+                withDockerRegistry([ credentialsId: 'dockerhub' ]) {
                     sh 'docker push $IMAGE_NAME:latest'
                 }
             }
