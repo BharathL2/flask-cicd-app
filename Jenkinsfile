@@ -2,7 +2,7 @@ pipeline {
     agent any
 
         environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub-login')
+    DOCKERHUB_CREDENTIALS = credentials('dockerhub')
         IMAGE_NAME = "bharathl2/flask-cicd-app"
     }
 
